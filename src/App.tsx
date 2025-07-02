@@ -1,6 +1,6 @@
 /* eslint-disable jsx-a11y/label-has-associated-control */
 /* eslint-disable jsx-a11y/control-has-associated-label */
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import { Todo } from './types/Todo';
 import { UserWarning } from './UserWarning';
 import { StatusFilter } from './types/StatusFilter';
@@ -19,13 +19,14 @@ export const App: React.FC = () => {
   const [loading, setLoading] = useState(false);
   const [isAdding, setIsAdding] = useState<boolean>(false);
   const [deletingTodos, setDeletingTodos] = useState<number[]>([]);
+  const inputRef = useRef<HTMLInputElement>(null);
 
   const filteredTodos = todos.filter(todo => {
-    if (filter === 'active') {
+    if (filter === StatusFilter.Active) {
       return !todo.completed;
     }
 
-    if (filter === 'completed') {
+    if (filter === StatusFilter.Completed) {
       return todo.completed;
     }
 
@@ -64,11 +65,7 @@ export const App: React.FC = () => {
         setTempTodo(null);
         setIsAdding(false);
         setTimeout(() => {
-          (
-            document.querySelector(
-              '[data-cy="NewTodoField"]',
-            ) as HTMLInputElement
-          )?.focus();
+          inputRef.current?.focus();
         }, 0);
       });
   };
@@ -84,12 +81,14 @@ export const App: React.FC = () => {
         setError('Unable to delete a todo');
       })
       .finally(() => {
-        setDeletingTodos(deletingTodos.filter(id => id !== todoId));
-        (
-          document.querySelector('[data-cy="NewTodoField"]') as HTMLInputElement
-        )?.focus();
+        setDeletingTodos(prev => prev.filter(id => id !== todoId));
+        inputRef.current?.focus();
       });
   };
+
+  setTimeout(() => {
+    inputRef.current?.focus();
+  }, 0);
 
   const handleClearCompleted = () => {
     const completedTodos = todos.filter(todo => todo.completed);
@@ -154,6 +153,7 @@ export const App: React.FC = () => {
           handleSubmit={handleSubmit}
           isAdding={isAdding}
           allCompleted={todos.length > 0 && todos.every(todo => todo.completed)}
+          inputRef={inputRef}
         />
 
         {loading && (

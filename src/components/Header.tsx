@@ -7,6 +7,7 @@ type Props = {
   handleSubmit: (event: React.FormEvent) => void;
   isAdding: boolean;
   allCompleted: boolean;
+  inputRef?: React.Ref<HTMLInputElement>;
 };
 
 export const Header: React.FC<Props> = ({
@@ -15,6 +16,7 @@ export const Header: React.FC<Props> = ({
   handleSubmit,
   isAdding,
   allCompleted,
+  inputRef,
 }) => (
   <header className="todoapp__header">
     <button
@@ -27,6 +29,7 @@ export const Header: React.FC<Props> = ({
 
     <form onSubmit={handleSubmit}>
       <input
+        ref={inputRef}
         data-cy="NewTodoField"
         type="text"
         className="todoapp__new-todo"
