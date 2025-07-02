@@ -109,11 +109,7 @@ export const App: React.FC = () => {
           completedCount--;
 
           if (completedCount === 0) {
-            (
-              document.querySelector(
-                '[data-cy="NewTodoField"]',
-              ) as HTMLInputElement
-            )?.focus();
+            inputRef.current?.focus();
           }
         });
     });
